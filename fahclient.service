@@ -1,0 +1,27 @@
+[Unit]
+Description=Folding@Home V7 Client
+Documentation=https://folding.stanford.edu/home/the-software/
+After=syslog.target network.target remote-fs.target
+
+[Service]
+Type=simple
+User=fahclient
+RuntimeDirectory=fahclient
+RuntimeDirectoryMode=0755
+WorkingDirectory=/var/lib/fahclient
+PIDFile=/run/fahclient/fahclient.pid
+#--chdir /var/lib/fahclient/
+ExecStart=/usr/bin/FAHClient /etc/fahclient/config.xml --pid-file=/run/fahclient/fahclient.pid --run-as fahclient
+ExecReload=/bin/kill -SIGUSR1 $MAINPID
+ExecStop= /bin/kill $MAINPID  #/usr/bin/FAHClient --send-command shutdown
+KillMode=process
+NoNewPrivileges=True
+CPUSchedulingPriority=1
+ProtectSystem=strict
+ProtectKernelTunables=yes
+ReadWritePaths=/var/lib/fahclient/ /etc/fahclient/
+MemoryDenyWriteExecute=yes
+
+[Install]
+WantedBy=multi-user.target
+
